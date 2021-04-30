@@ -57,5 +57,7 @@ class TvShowViewModelTest {
         val tvShowEntities = viewModel.listTvShow
         assertNotNull(tvShowEntities)
         assertEquals(viewModel.listTvShow.value?.size, tvShowEntities.value?.size)
+        viewModel.listTvShow.observeForever(observer)
+
     }
 }

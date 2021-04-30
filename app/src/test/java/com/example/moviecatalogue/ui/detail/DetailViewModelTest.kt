@@ -4,6 +4,7 @@ import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.moviecatalogue.data.source.Repository
 import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.TvShowEntity
 import com.example.moviecatalogue.utils.DataDummy
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers
@@ -35,7 +36,10 @@ class DetailViewModelTest {
     var instantTaskExecutorRule = InstantTaskExecutorRule()
 
     @Mock
-    private lateinit var observer: Observer<MovieEntity>
+    private lateinit var observerMovie: Observer<MovieEntity>
+
+    @Mock
+    private lateinit var observerTvShow: Observer<TvShowEntity>
 
     @Mock
     private lateinit var repository: Repository
@@ -59,8 +63,8 @@ class DetailViewModelTest {
         assertEquals(dataMovie.description, movieEntity.value?.description)
         assertEquals(dataMovie.status, movieEntity.value?.status)
 
-        viewModel.movie.observeForever(observer)
-        verify(observer).onChanged(dataMovie)
+        viewModel.movie.observeForever(observerMovie)
+        verify(observerMovie).onChanged(dataMovie)
     }
 
     @Test
@@ -75,5 +79,8 @@ class DetailViewModelTest {
         assertEquals(dataTvShow.rating, tvShowEntity.value?.rating)
         assertEquals(dataTvShow.description, tvShowEntity.value?.description)
         assertEquals(dataTvShow.status, tvShowEntity.value?.status)
+
+        viewModel.tvShow.observeForever(observerTvShow)
+        verify(observerTvShow).onChanged(dataTvShow)
     }
 }

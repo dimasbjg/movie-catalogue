@@ -34,7 +34,7 @@ class RepositoryTest {
 
     @Test
     fun getListMovie() = runBlocking {
-                `when`(remote.getListMovie(queryMovie)).thenReturn(movieResponse)
+        `when`(remote.getListMovie(queryMovie)).thenReturn(movieResponse)
         val movieListTest = repository.getListMovie(queryMovie)
         verify(remote).getListMovie(queryMovie)
         assertNotNull(movieListTest)

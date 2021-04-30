@@ -1,7 +1,6 @@
 package com.example.moviecatalogue.ui.movie
 
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,8 +19,7 @@ class MovieFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        // Inflate the layout for this fragment
+    ): View {
         fragmentMovieBinding = FragmentMovieBinding.inflate(layoutInflater, container, false)
         return fragmentMovieBinding.root
     }
@@ -58,25 +56,6 @@ class MovieFragment : Fragment() {
             isLoading = false
             showLoading(isLoading)
         })
-//        }
-
-
-//        if (activity != null) {
-//            val viewModel = ViewModelProvider(
-//                this,
-//                ViewModelProvider.NewInstanceFactory()
-//            )[MovieViewModel::class.java]
-//            val movie = viewModel.getMovie()
-//
-//            val movieAdapter = MovieAdapter()
-//            movieAdapter.setMovie(movie)
-//
-//            with(fragmentMovieBinding.rvMovie) {
-//                layoutManager = LinearLayoutManager(context)
-//                setHasFixedSize(true)
-//                adapter = movieAdapter
-//            }
-//        }
     }
 
 

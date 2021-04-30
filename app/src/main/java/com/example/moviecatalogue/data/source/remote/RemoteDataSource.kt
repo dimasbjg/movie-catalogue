@@ -50,19 +50,19 @@ class RemoteDataSource private constructor(private val apiServiceInterface: ApiS
         return result
     }
 
-    interface MovieListCallback{
-        fun onMovieListLoaded(movies : List<MovieEntity>?)
+    interface MovieListCallback {
+        fun onMovieListLoaded(movies: List<MovieItems>?)
     }
 
-    interface MovieDetailCallback{
+    interface MovieDetailCallback {
         fun onMovieDetailLoaded(movieDetail: MovieEntity?)
     }
 
-    interface TvShowListCallback{
-        fun onTvShowListLoaded(tvShows : List<TvShowEntity>?)
+    interface TvShowListCallback {
+        fun onTvShowListLoaded(tvShows: List<MovieItems>?)
     }
 
-    interface TvShowDetailCallback{
+    interface TvShowDetailCallback {
         fun onTvShowDetailLoaded(tvShowDetail: TvShowEntity?)
     }
 

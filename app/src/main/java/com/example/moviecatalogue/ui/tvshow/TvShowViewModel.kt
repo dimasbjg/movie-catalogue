@@ -25,26 +25,5 @@ class TvShowViewModel(private val repository: Repository) : ViewModel() {
             val result = repository.getListTvShow(search)
             _listTvShow.postValue(result)
         }
-
-//        val client = ApiConfig.getApiService().getListTvShow(apiKey, search)
-//        client.enqueue(object : Callback<TvShowResponse> {
-//            override fun onResponse(
-//                call: Call<TvShowResponse>,
-//                response: Response<TvShowResponse>
-//            ) {
-//                if (response.isSuccessful) {
-//                    _listTvShow.value = response.body()?.results
-//                } else {
-//                    Log.e(TAG, "onFailure: ${response.message()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<TvShowResponse>, t: Throwable) {
-//                Log.e(TAG, "onFailure: ${t.message.toString()}")
-//            }
-//
-//        })
     }
-
-//    fun getTvShow(): List<TvShowEntity> = DataTvShow.listData
 }

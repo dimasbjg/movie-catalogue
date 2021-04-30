@@ -29,28 +29,6 @@ class DetailViewModel(private val repository: Repository) : ViewModel() {
             val result = repository.getMovieDetail(id)
             _movie.postValue(result)
         }
-
-
-//        val client = ApiConfig.getApiService().getMovieDetail(id, apiKey)
-//        client.enqueue(object : Callback<DetailMovieResponse> {
-//            override fun onResponse(
-//                call: Call<DetailMovieResponse>,
-//                response: Response<DetailMovieResponse>
-//            ) {
-//                if (response.isSuccessful) {
-//                    _movie.value = response.body()
-//                } else {
-//                    Log.e(TAG, "onFailure: ${response.message()}")
-//
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<DetailMovieResponse>, t: Throwable) {
-//                Log.e(TAG, "onFailure: ${t.message.toString()}")
-//
-//            }
-//
-//        })
     }
 
     fun setTvShowDetail(id: Int) {
@@ -60,23 +38,4 @@ class DetailViewModel(private val repository: Repository) : ViewModel() {
         }
 
     }
-//        val client = ApiConfig.getApiService().getTvShowDetail(id, apiKey)
-//        client.enqueue(object : Callback<DetailTvShowResponse> {
-//            override fun onResponse(
-//                call: Call<DetailTvShowResponse>,
-//                response: Response<DetailTvShowResponse>
-//            ) {
-//                if (response.isSuccessful) {
-//                    _tvShow.value = response.body()
-//                } else {
-//                    Log.e(TAG, "onFailure: ${response.message()}")
-//                }
-//            }
-//
-//            override fun onFailure(call: Call<DetailTvShowResponse>, t: Throwable) {
-//                Log.e(TAG, "onFailure: ${t.message.toString()}")
-//            }
-//
-//        })
-//    }
 }

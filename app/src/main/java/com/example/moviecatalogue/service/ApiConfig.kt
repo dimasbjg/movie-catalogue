@@ -16,28 +16,13 @@ class ApiConfig {
             val client = OkHttpClient.Builder()
                 .addInterceptor(loggingInterceptor)
                 .build()
-            return retrofit?: synchronized(this) {
-                retrofit?: Retrofit.Builder()
+            return retrofit ?: synchronized(this) {
+                retrofit ?: Retrofit.Builder()
                     .baseUrl("https://api.themoviedb.org/3/")
                     .addConverterFactory(GsonConverterFactory.create())
                     .client(client)
                     .build()
             }
         }
-
-
-//        fun getApiService(): ApiServiceInterface {
-//            val loggingInterceptor =
-//                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
-//            val client = OkHttpClient.Builder()
-//                .addInterceptor(loggingInterceptor)
-//                .build()
-//            val retrofit = Retrofit.Builder()
-//                .baseUrl("https://api.themoviedb.org/3/")
-//                .addConverterFactory(GsonConverterFactory.create())
-//                .client(client)
-//                .build()
-//            return retrofit.create(ApiServiceInterface::class.java)
-//        }
     }
 }
