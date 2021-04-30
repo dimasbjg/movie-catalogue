@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviecatalogue.data.TvShowEntity
+import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.remote.response.TvShowItems
 import com.example.moviecatalogue.databinding.ItemLayoutBinding
 import com.example.moviecatalogue.ui.detail.DetailActivity
 import com.example.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_DETAIL
@@ -26,13 +27,12 @@ class TvShowAdapter : RecyclerView.Adapter<TvShowAdapter.MyViewHolder>() {
         fun bind(tvShow: TvShowEntity) {
             with(binding) {
                 itemTitle.text = tvShow.title
-                itemDescription.text = tvShow.description
                 Glide.with(itemView.context)
-                    .load(tvShow.imgPoster)
+                    .load("https://image.tmdb.org/t/p/w500" + tvShow.imgPoster)
                     .into(imgPoster)
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java)
-                    intent.putExtra(EXTRA_DETAIL, tvShow.title)
+                    intent.putExtra(EXTRA_DETAIL, tvShow.id)
                     intent.putExtra(EXTRA_FROM, "TvShow")
                     itemView.context.startActivity(intent)
                 }

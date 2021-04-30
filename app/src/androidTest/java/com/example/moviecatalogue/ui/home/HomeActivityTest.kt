@@ -3,14 +3,11 @@ package com.example.moviecatalogue.ui.home
 import androidx.recyclerview.widget.RecyclerView
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
-import androidx.test.espresso.action.ViewActions.swipeLeft
 import androidx.test.espresso.assertion.ViewAssertions.matches
 import androidx.test.espresso.contrib.RecyclerViewActions
 import androidx.test.espresso.matcher.ViewMatchers.*
 import androidx.test.ext.junit.rules.ActivityScenarioRule
 import com.example.moviecatalogue.R
-import com.example.moviecatalogue.data.DataMovie
-import com.example.moviecatalogue.data.DataTvShow
 import org.junit.Rule
 import org.junit.Test
 
@@ -43,8 +40,8 @@ class HomeActivityTest {
         onView(withId(R.id.detail_title)).check(matches(isDisplayed()))
         onView(withId(R.id.detail_title)).check(matches(withText(dataMovie[0].title)))
 
-        onView(withId(R.id.director)).check(matches(isDisplayed()))
-        onView(withId(R.id.director)).check(matches(withText("Director: ${dataMovie[0].director}")))
+        onView(withId(R.id.release_date)).check(matches(isDisplayed()))
+        onView(withId(R.id.release_date)).check(matches(withText("Director: ${dataMovie[0].director}")))
 
         onView(withId(R.id.writter)).check(matches(isDisplayed()))
         onView(withId(R.id.writter)).check(matches(withText("Writter: ${dataMovie[0].writter}")))
@@ -85,8 +82,8 @@ class HomeActivityTest {
         onView(withId(R.id.detail_title)).check(matches(isDisplayed()))
         onView(withId(R.id.detail_title)).check(matches(withText(dataTvShow[0].title)))
 
-        onView(withId(R.id.director)).check(matches(isDisplayed()))
-        onView(withId(R.id.director)).check(matches(withText("")))
+        onView(withId(R.id.release_date)).check(matches(isDisplayed()))
+        onView(withId(R.id.release_date)).check(matches(withText("")))
 
         onView(withId(R.id.writter)).check(matches(isDisplayed()))
         onView(withId(R.id.writter)).check(matches(withText("")))

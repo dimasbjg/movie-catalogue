@@ -5,7 +5,8 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviecatalogue.data.MovieEntity
+import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.remote.response.MovieItems
 import com.example.moviecatalogue.databinding.ItemLayoutBinding
 import com.example.moviecatalogue.ui.detail.DetailActivity
 import com.example.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_DETAIL
@@ -24,16 +25,14 @@ class MovieAdapter : RecyclerView.Adapter<MovieAdapter.MyViewHolder>() {
     class MyViewHolder(private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(movie: MovieEntity) {
-
             with(binding) {
                 itemTitle.text = movie.title
-                itemDescription.text = movie.description
                 Glide.with(itemView.context)
-                    .load(movie.imgPoster)
+                    .load("https://image.tmdb.org/t/p/w500" + movie.imgPoster)
                     .into(imgPoster)
                 itemView.setOnClickListener {
                     val intent = Intent(itemView.context, DetailActivity::class.java)
-                    intent.putExtra(EXTRA_DETAIL, movie.title)
+                    intent.putExtra(EXTRA_DETAIL, movie.id)
                     intent.putExtra(EXTRA_FROM, "Movie")
                     itemView.context.startActivity(intent)
                 }

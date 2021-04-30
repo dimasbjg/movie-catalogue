@@ -1,39 +1,82 @@
 package com.example.moviecatalogue.ui.detail
 
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.moviecatalogue.data.DataMovie
-import com.example.moviecatalogue.data.DataTvShow
-import com.example.moviecatalogue.data.MovieEntity
-import com.example.moviecatalogue.data.TvShowEntity
+import androidx.lifecycle.viewModelScope
+import com.example.moviecatalogue.BuildConfig
+import com.example.moviecatalogue.data.source.Repository
+import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.TvShowEntity
+import kotlinx.coroutines.launch
 
-class DetailViewModel : ViewModel() {
-    private lateinit var title: String
+class DetailViewModel(private val repository: Repository) : ViewModel() {
 
-    fun setMovieDetail(title: String) {
-        this.title = title
+    private var _movie = MutableLiveData<MovieEntity>()
+    val movie: LiveData<MovieEntity> = _movie
+
+    private var _tvShow = MutableLiveData<TvShowEntity>()
+    val tvShow: LiveData<TvShowEntity> = _tvShow
+
+    companion object {
+        private const val TAG = "DetailViewModel"
+        private const val apiKey = BuildConfig.API_KEY
     }
 
-    fun setTvShowDetail(title: String) {
-        this.title = title
-    }
 
-    fun getMovieDetail(): MovieEntity? {
-        var movie: MovieEntity? = null
-        for (movieEntity in DataMovie.listData) {
-            if (movieEntity.title == this.title) {
-                movie = movieEntity
-            }
+    fun setMovieDetail(id: Int) {
+        viewModelScope.launch {
+            val result = repository.getMovieDetail(id)
+            _movie.postValue(result)
         }
-        return movie
+
+
+//        val client = ApiConfig.getApiService().getMovieDetail(id, apiKey)
+//        client.enqueue(object : Callback<DetailMovieResponse> {
+//            override fun onResponse(
+//                call: Call<DetailMovieResponse>,
+//                response: Response<DetailMovieResponse>
+//            ) {
+//                if (response.isSuccessful) {
+//                    _movie.value = response.body()
+//                } else {
+//                    Log.e(TAG, "onFailure: ${response.message()}")
+//
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<DetailMovieResponse>, t: Throwable) {
+//                Log.e(TAG, "onFailure: ${t.message.toString()}")
+//
+//            }
+//
+//        })
     }
 
-    fun getTvShowDetail(): TvShowEntity? {
-        var tvShow: TvShowEntity? = null
-        for (tvShowEntity in DataTvShow.listData) {
-            if (tvShowEntity.title == this.title) {
-                tvShow = tvShowEntity
-            }
+    fun setTvShowDetail(id: Int) {
+        viewModelScope.launch {
+            val detailResult = repository.getTvShowDetail(id)
+            _tvShow.postValue(detailResult)
         }
-        return tvShow
+
     }
+//        val client = ApiConfig.getApiService().getTvShowDetail(id, apiKey)
+//        client.enqueue(object : Callback<DetailTvShowResponse> {
+//            override fun onResponse(
+//                call: Call<DetailTvShowResponse>,
+//                response: Response<DetailTvShowResponse>
+//            ) {
+//                if (response.isSuccessful) {
+//                    _tvShow.value = response.body()
+//                } else {
+//                    Log.e(TAG, "onFailure: ${response.message()}")
+//                }
+//            }
+//
+//            override fun onFailure(call: Call<DetailTvShowResponse>, t: Throwable) {
+//                Log.e(TAG, "onFailure: ${t.message.toString()}")
+//            }
+//
+//        })
+//    }
 }

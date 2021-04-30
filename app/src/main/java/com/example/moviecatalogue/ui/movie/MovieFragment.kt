@@ -1,17 +1,21 @@
 package com.example.moviecatalogue.ui.movie
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
-import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.GridLayoutManager
 import com.example.moviecatalogue.databinding.FragmentMovieBinding
+import com.example.moviecatalogue.viewmodel.ViewModelFactory
 
 class MovieFragment : Fragment() {
 
     private lateinit var fragmentMovieBinding: FragmentMovieBinding
+    private lateinit var adapter: MovieAdapter
+    private var isLoading = false
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -25,22 +29,60 @@ class MovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        if (activity != null) {
-            val viewModel = ViewModelProvider(
-                this,
-                ViewModelProvider.NewInstanceFactory()
-            )[MovieViewModel::class.java]
-            val movie = viewModel.getMovie()
 
-            val movieAdapter = MovieAdapter()
-            movieAdapter.setMovie(movie)
+        adapter = MovieAdapter()
+        adapter.notifyDataSetChanged()
 
-            with(fragmentMovieBinding.rvMovie) {
-                layoutManager = LinearLayoutManager(context)
-                setHasFixedSize(true)
-                adapter = movieAdapter
-            }
+        fragmentMovieBinding.rvMovie.layoutManager = GridLayoutManager(requireActivity(), 2)
+        fragmentMovieBinding.rvMovie.adapter = adapter
+
+
+        val factory = ViewModelFactory.getInstance(requireActivity())
+        val viewModel = ViewModelProvider(
+            this,
+            factory
+        )[MovieViewModel::class.java]
+
+        fragmentMovieBinding.btSearch.setOnClickListener {
+            val search = fragmentMovieBinding.search.text.toString()
+            if (search.isEmpty()) return@setOnClickListener
+            isLoading = true
+            showLoading(isLoading)
+            viewModel.setMovie(search)
+            adapter.notifyDataSetChanged()
         }
+
+        viewModel.listMovie.observe(this, { listMovie ->
+            adapter.setMovie(listMovie)
+            adapter.notifyDataSetChanged()
+            isLoading = false
+            showLoading(isLoading)
+        })
+//        }
+
+
+//        if (activity != null) {
+//            val viewModel = ViewModelProvider(
+//                this,
+//                ViewModelProvider.NewInstanceFactory()
+//            )[MovieViewModel::class.java]
+//            val movie = viewModel.getMovie()
+//
+//            val movieAdapter = MovieAdapter()
+//            movieAdapter.setMovie(movie)
+//
+//            with(fragmentMovieBinding.rvMovie) {
+//                layoutManager = LinearLayoutManager(context)
+//                setHasFixedSize(true)
+//                adapter = movieAdapter
+//            }
+//        }
+    }
+
+
+    private fun showLoading(state: Boolean) {
+        if (state) fragmentMovieBinding.progressBar.visibility = View.VISIBLE
+        else fragmentMovieBinding.progressBar.visibility = View.INVISIBLE
     }
 
 }
