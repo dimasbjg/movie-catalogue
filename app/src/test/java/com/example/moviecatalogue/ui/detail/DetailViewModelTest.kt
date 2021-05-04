@@ -1,48 +1,86 @@
 package com.example.moviecatalogue.ui.detail
 
-import com.example.moviecatalogue.data.DataMovie
-import com.example.moviecatalogue.data.DataTvShow
+import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.Observer
+import com.example.moviecatalogue.data.source.Repository
+import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.utils.DataDummy
+import com.nhaarman.mockitokotlin2.verify
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.test.TestCoroutineDispatcher
+import kotlinx.coroutines.test.setMain
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Before
+import org.junit.Rule
 import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.Mockito.`when`
+import org.mockito.junit.MockitoJUnitRunner
 
+@ExperimentalCoroutinesApi
+@RunWith(MockitoJUnitRunner::class)
 class DetailViewModelTest {
 
     private lateinit var viewModel: DetailViewModel
-    private val dataMovie = DataMovie.listData[0]
-    private val dataTvShow = DataTvShow.listData[0]
+    private val dataMovie = DataDummy.getDummyListMovie()[0]
+    private val dataTvShow = DataDummy.getDummyListTvShow()[0]
+    private val dispatcher = TestCoroutineDispatcher()
+
+
+    @get:Rule
+    var instantTaskExecutorRule = InstantTaskExecutorRule()
+
+    @Mock
+    private lateinit var observerMovie: Observer<MovieEntity>
+
+    @Mock
+    private lateinit var observerTvShow: Observer<TvShowEntity>
+
+    @Mock
+    private lateinit var repository: Repository
 
     @Before
     fun setUp() {
-        viewModel = DetailViewModel()
-        viewModel.setMovieDetail(dataMovie.title)
-        viewModel.setTvShowDetail(dataMovie.title)
+        viewModel = DetailViewModel(repository)
+        Dispatchers.setMain(dispatcher)
     }
 
     @Test
-    fun getMovieDetail() {
-        viewModel.setMovieDetail(dataMovie.title)
-        val movieEntity = viewModel.getMovieDetail()
+    fun getMovieDetail() = runBlocking {
+        `when`(repository.getMovieDetail(12444)).thenReturn(dataMovie)
+        viewModel.setMovieDetail(dataMovie.id)
+        val movieEntity = viewModel.movie
         assertNotNull(movieEntity)
-        assertEquals(dataMovie.title, movieEntity?.title)
-        assertEquals(dataMovie.imgPoster, movieEntity?.imgPoster)
-        assertEquals(dataMovie.director, movieEntity?.director)
-        assertEquals(dataMovie.starring, movieEntity?.starring)
-        assertEquals(dataMovie.description, movieEntity?.description)
-        assertEquals(dataMovie.writter, movieEntity?.writter)
-        assertEquals(dataMovie.rating, movieEntity?.rating)
+        assertEquals(dataMovie.title, movieEntity.value?.title)
+        assertEquals(dataMovie.imgPoster, movieEntity.value?.imgPoster)
+        assertEquals(dataMovie.releaseDate, movieEntity.value?.releaseDate)
+        assertEquals(dataMovie.rating, movieEntity.value?.rating)
+        assertEquals(dataMovie.description, movieEntity.value?.description)
+        assertEquals(dataMovie.status, movieEntity.value?.status)
+
+        viewModel.movie.observeForever(observerMovie)
+        verify(observerMovie).onChanged(dataMovie)
     }
 
     @Test
-    fun getTvShowDetail() {
-        viewModel.setTvShowDetail(dataTvShow.title)
-        val tvShowEntity = viewModel.getTvShowDetail()
+    fun getTvShowDetail() = runBlocking {
+        `when`(repository.getTvShowDetail(71906)).thenReturn(dataTvShow)
+        viewModel.setTvShowDetail(dataTvShow.id)
+        val tvShowEntity = viewModel.tvShow
         assertNotNull(tvShowEntity)
-        assertEquals(dataTvShow.title, tvShowEntity?.title)
-        assertEquals(dataTvShow.description, tvShowEntity?.description)
-        assertEquals(dataTvShow.imgPoster, tvShowEntity?.imgPoster)
-        assertEquals(dataTvShow.rating, tvShowEntity?.rating)
-        assertEquals(dataTvShow.starring, tvShowEntity?.starring)
+        assertEquals(dataTvShow.title, tvShowEntity.value?.title)
+        assertEquals(dataTvShow.imgPoster, tvShowEntity.value?.imgPoster)
+        assertEquals(dataTvShow.releaseDate, tvShowEntity.value?.releaseDate)
+        assertEquals(dataTvShow.rating, tvShowEntity.value?.rating)
+        assertEquals(dataTvShow.description, tvShowEntity.value?.description)
+        assertEquals(dataTvShow.status, tvShowEntity.value?.status)
+
+        viewModel.tvShow.observeForever(observerTvShow)
+        verify(observerTvShow).onChanged(dataTvShow)
     }
 }

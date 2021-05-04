@@ -1,12 +1,14 @@
 package com.example.moviecatalogue.ui.detail
 
 import android.os.Bundle
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
-import com.example.moviecatalogue.data.MovieEntity
-import com.example.moviecatalogue.data.TvShowEntity
+import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.TvShowEntity
 import com.example.moviecatalogue.databinding.ActivityDetailBinding
+import com.example.moviecatalogue.viewmodel.ViewModelFactory
 
 class DetailActivity : AppCompatActivity() {
 
@@ -22,22 +24,28 @@ class DetailActivity : AppCompatActivity() {
         binding = ActivityDetailBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        val factory = ViewModelFactory.getInstance(this)
         val viewModel = ViewModelProvider(
             this,
-            ViewModelProvider.NewInstanceFactory()
+            factory
         )[DetailViewModel::class.java]
+
 
         val extras = intent.extras
         if (extras != null) {
-            val title = extras.getString(EXTRA_DETAIL)
-            if (title != null) {
-                if (extras.getString(EXTRA_FROM) == "Movie") {
-                    viewModel.setMovieDetail(title)
-                    viewModel.getMovieDetail()?.let { populateMovieDetail(it) }
-                } else {
-                    viewModel.setTvShowDetail(title)
-                    viewModel.getTvShowDetail()?.let { populateTvShowDetail(it) }
-                }
+            val id = extras.getInt(EXTRA_DETAIL)
+            if (extras.getString(EXTRA_FROM) == "Movie") {
+                viewModel.setMovieDetail(id)
+
+                viewModel.movie.observe(this, { movie ->
+                    populateMovieDetail(movie)
+                })
+            } else {
+                viewModel.setTvShowDetail(id)
+                Log.d("iniini", "$id")
+                viewModel.tvShow.observe(this, { tvShow ->
+                    populateTvShowDetail(tvShow)
+                })
             }
         }
 
@@ -48,14 +56,13 @@ class DetailActivity : AppCompatActivity() {
         with(binding) {
             detailTitle.text = tvShow.title
             description.text = tvShow.description
-            staring.text = tvShow.starring
-            writter.text = ""
-            staring.text = ""
-            director.text = ""
+            ("Status: " + tvShow.status).also { status.text = it }
+
             Glide.with(this@DetailActivity)
-                .load(tvShow.imgPoster)
+                .load("https://image.tmdb.org/t/p/w500" + tvShow.imgPoster)
                 .into(imgPoster)
-            rating.text = tvShow.rating
+            rating.text = tvShow.rating.toString()
+            ("Release Date: " + tvShow.releaseDate).also { releaseDate.text = it }
         }
     }
 
@@ -63,13 +70,11 @@ class DetailActivity : AppCompatActivity() {
         with(binding) {
             detailTitle.text = movieDetail.title
             description.text = movieDetail.description
-            ("Director: " + movieDetail.director).also { director.text = it }
-            ("Writter: " + movieDetail.writter).also { writter.text = it }
-            ("Starring: " + movieDetail.starring).also { staring.text = it }
-            rating.text = movieDetail.rating
-
+            rating.text = movieDetail.rating.toString()
+            ("Release Data: " + movieDetail.releaseDate).also { releaseDate.text = it }
+            ("Status: " + movieDetail.status).also { status.text = it }
             Glide.with(this@DetailActivity)
-                .load(movieDetail.imgPoster)
+                .load("https://image.tmdb.org/t/p/w500" + movieDetail.imgPoster)
                 .into(imgPoster)
         }
     }

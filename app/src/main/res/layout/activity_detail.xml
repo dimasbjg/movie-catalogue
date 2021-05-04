@@ -13,6 +13,7 @@
         android:layout_marginStart="16dp"
         android:layout_marginTop="16dp"
         android:scaleType="centerCrop"
+        android:src="@color/black"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="ContentDescription" />
@@ -32,7 +33,7 @@
         app:layout_constraintTop_toTopOf="@id/img_poster" />
 
     <TextView
-        android:id="@+id/director"
+        android:id="@+id/release_date"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
@@ -44,39 +45,16 @@
         app:layout_constraintTop_toBottomOf="@id/detail_title" />
 
     <TextView
-        android:id="@+id/writter"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:maxLines="2"
-        android:text="@string/writters"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/detail_title"
-        app:layout_constraintTop_toBottomOf="@id/director" />
-
-    <TextView
-        android:id="@+id/staring"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:layout_marginEnd="16dp"
-        android:maxLines="2"
-        android:text="@string/starring"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@id/detail_title"
-        app:layout_constraintTop_toBottomOf="@id/writter" />
-
-    <TextView
         android:id="@+id/rating"
-        android:layout_width="0dp"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginStart="16dp"
         android:text="@string/rating"
-        android:textSize="20sp"
+        android:textSize="28sp"
         android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="@id/img_poster"
-        app:layout_constraintStart_toEndOf="@id/img_poster" />
+        app:layout_constraintBottom_toBottomOf="@+id/img_poster"
+        app:layout_constraintEnd_toEndOf="@+id/release_date"
+        app:layout_constraintStart_toStartOf="@+id/release_date" />
+
 
     <TextView
         android:id="@+id/description"
@@ -89,5 +67,14 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/img_poster" />
+
+    <TextView
+        android:id="@+id/status"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintStart_toStartOf="@id/detail_title"
+        app:layout_constraintTop_toBottomOf="@id/release_date"
+        android:layout_marginTop="8dp"
+        android:text="@string/status" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
