@@ -14,10 +14,13 @@
         android:theme="@style/Theme.MovieCatalogue"
         android:usesCleartextTraffic="true"
         tools:targetApi="m">
-        <activity android:name=".ui.detail.DetailActivity"
-            android:parentActivityName=".ui.home.HomeActivity"/>
-        <activity android:name=".ui.home.HomeActivity"
-            android:theme="@style/Theme.AppCompat.DayNight.NoActionBar">
+        <activity
+            android:name=".ui.favorites.FavoritesActivity"
+            android:parentActivityName=".ui.home.HomeActivity" />
+        <activity
+            android:name=".ui.detail.DetailActivity"
+            android:parentActivityName=".ui.home.HomeActivity" />
+        <activity android:name=".ui.home.HomeActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

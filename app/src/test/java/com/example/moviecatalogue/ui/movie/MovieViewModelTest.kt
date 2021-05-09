@@ -3,7 +3,7 @@ package com.example.moviecatalogue.ui.movie
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.moviecatalogue.data.source.Repository
-import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.utils.DataDummy
 import junit.framework.Assert.assertEquals
 import junit.framework.TestCase.assertNotNull

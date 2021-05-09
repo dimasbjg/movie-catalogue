@@ -1,12 +1,11 @@
 package com.example.moviecatalogue.ui.movie
 
-import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.moviecatalogue.data.source.Repository
-import com.example.moviecatalogue.data.source.local.MovieEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import kotlinx.coroutines.launch
 
 class MovieViewModel(private val repository: Repository) : ViewModel() {
@@ -22,7 +21,7 @@ class MovieViewModel(private val repository: Repository) : ViewModel() {
             val result = repository.getListMovie(search)
             _listMovie.postValue(result)
         }
-        listMovie?.value?.get(0)?.title?.let { Log.d("iiii", it) }
+
     }
 
 }

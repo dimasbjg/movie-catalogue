@@ -1,20 +1,32 @@
 package com.example.moviecatalogue.data.source
 
-import com.example.moviecatalogue.data.source.local.MovieEntity
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import androidx.lifecycle.LiveData
+import androidx.paging.LivePagedListBuilder
+import androidx.paging.PagedList
+import com.example.moviecatalogue.data.source.local.LocalDataSource
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.data.source.remote.RemoteDataSource
+import com.example.moviecatalogue.utils.AppExecutors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class Repository private constructor(private val remoteDataSource: RemoteDataSource) : DataSource {
+class Repository private constructor(
+    private val remoteDataSource: RemoteDataSource,
+    private val localDataSource: LocalDataSource,
+    private val appExecutors: AppExecutors
+) : DataSource {
 
     companion object {
         @Volatile
         private var instance: Repository? = null
 
-        fun getInstance(remoteData: RemoteDataSource): Repository =
+        fun getInstance(
+            remoteData: RemoteDataSource,
+            localDataSource: LocalDataSource,
+            appExecutors: AppExecutors
+        ): Repository =
             instance ?: synchronized(this) {
-                Repository(remoteData).apply { instance = this }
+                Repository(remoteData, localDataSource, appExecutors).apply { instance = this }
             }
 
     }
@@ -33,11 +45,11 @@ class Repository private constructor(private val remoteDataSource: RemoteDataSou
         return movieList
     }
 
-    override suspend fun getListTvShow(query: String): List<TvShowEntity> {
-        val result = remoteDataSource.getListTvShow(query)
-        val tvShowList = ArrayList<TvShowEntity>()
+    override suspend fun getListTvShow(query: String): List<MovieEntity> {
+        val result = withContext(Dispatchers.IO) { remoteDataSource.getListTvShow(query) }
+        val tvShowList = ArrayList<MovieEntity>()
         result.results.forEach { tvShowItems ->
-            val tvShow = TvShowEntity(
+            val tvShow = MovieEntity(
                 title = tvShowItems.name,
                 imgPoster = tvShowItems.posterPath,
                 id = tvShowItems.id
@@ -60,9 +72,9 @@ class Repository private constructor(private val remoteDataSource: RemoteDataSou
         )
     }
 
-    override suspend fun getTvShowDetail(id: Int): TvShowEntity {
+    override suspend fun getTvShowDetail(id: Int): MovieEntity {
         val result = remoteDataSource.getTvShowDetail(id)
-        return TvShowEntity(
+        return MovieEntity(
             result.name,
             result.overview,
             result.voteAverage,
@@ -71,6 +83,40 @@ class Repository private constructor(private val remoteDataSource: RemoteDataSou
             result.status,
             result.id
         )
+    }
+
+    override fun getMoviesFavorites(): LiveData<PagedList<MovieEntity>> {
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(4)
+            .setPageSize(4)
+            .build()
+        return LivePagedListBuilder(localDataSource.getMoviesFavorites(), config).build()
+    }
+
+    override fun getTvShowFavorites(): LiveData<PagedList<MovieEntity>> {
+        val config = PagedList.Config.Builder()
+            .setEnablePlaceholders(false)
+            .setInitialLoadSizeHint(4)
+            .setPageSize(4)
+            .build()
+        return LivePagedListBuilder(localDataSource.getTvShowFavorites(), config).build()
+    }
+
+    override fun addFavorites(movie: MovieEntity) {
+        appExecutors.diskIO().execute {
+            localDataSource.insertFavorites(movie)
+        }
+    }
+
+    override fun removeFavorites(movie: MovieEntity) {
+        appExecutors.diskIO().execute {
+            localDataSource.deleteFavorites(movie)
+        }
+    }
+
+    override fun checkFavorites(id: Int): LiveData<Boolean> {
+        return localDataSource.checkFavorites(id)
     }
 
 
