@@ -13,9 +13,6 @@ class MovieViewModel(private val repository: Repository) : ViewModel() {
     private var _listMovie = MutableLiveData<List<MovieEntity>>()
     val listMovie: LiveData<List<MovieEntity>> = _listMovie
 
-    fun getMovieList(): LiveData<List<MovieEntity>> = listMovie
-
-
     fun setMovie(search: String) {
         viewModelScope.launch {
             val result = repository.getListMovie(search)

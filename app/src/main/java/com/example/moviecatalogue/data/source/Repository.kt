@@ -10,7 +10,7 @@ import com.example.moviecatalogue.utils.AppExecutors
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class Repository private constructor(
+class Repository constructor(
     private val remoteDataSource: RemoteDataSource,
     private val localDataSource: LocalDataSource,
     private val appExecutors: AppExecutors

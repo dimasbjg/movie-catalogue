@@ -82,4 +82,18 @@ class DetailViewModelTest {
         viewModel.tvShow.observeForever(observerTvShow)
         verify(observerTvShow).onChanged(dataTvShow)
     }
+
+    @Test
+    fun addFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        viewModel.insertFavorites(movieDetailTest)
+        verify(repository).addFavorites(movieDetailTest)
+    }
+
+    @Test
+    fun removeFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        viewModel.deleteFavorites(movieDetailTest)
+        verify(repository).removeFavorites(movieDetailTest)
+    }
 }

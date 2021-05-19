@@ -1,18 +1,15 @@
 package com.example.moviecatalogue.data.source
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.paging.DataSource
 import com.example.moviecatalogue.data.source.local.LocalDataSource
 import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.data.source.remote.RemoteDataSource
-import com.example.moviecatalogue.utils.AppExecutors
-import com.example.moviecatalogue.utils.DataDummy
-import com.example.moviecatalogue.utils.LiveDataTestUnit
-import com.example.moviecatalogue.utils.PagedDataTest
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.verify
+import com.example.moviecatalogue.db.MovieDao
+import com.example.moviecatalogue.utils.*
+import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -20,7 +17,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import java.util.concurrent.Executors
 
+@Suppress("UNCHECKED_CAST")
+@ExperimentalCoroutinesApi
 class RepositoryTest {
 
     @get:Rule
@@ -40,6 +40,7 @@ class RepositoryTest {
     private val movie = DataDummy.getDummyDetailMovieResponse()
     private val tvShowResponse = DataDummy.getDummyTvShowResponse()
     private val tvShow = DataDummy.getDummyDetailTvShowResponse()
+    private val testExecutor = AppExecutors(TestExecutor(),TestExecutor(),TestExecutor())
 
     @Test
     fun getListMovie() = runBlocking {
@@ -91,7 +92,8 @@ class RepositoryTest {
 
     @Test
     fun getMoviesFavorites() {
-        val dataSourceFactory = mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
+        val dataSourceFactory =
+            mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
         `when`(local.getMoviesFavorites()).thenReturn(dataSourceFactory)
         repository.getMoviesFavorites()
 
@@ -102,13 +104,32 @@ class RepositoryTest {
 
     @Test
     fun getTvShowFavorites() {
-        val dataSourceFactory = mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
+        val dataSourceFactory =
+            mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
         `when`(local.getTvShowFavorites()).thenReturn(dataSourceFactory)
         repository.getTvShowFavorites()
 
         val moviesFavorite = PagedDataTest.mockPagedList(DataDummy.getDummyListTvShow())
         verify(local).getTvShowFavorites()
         assertNotNull(moviesFavorite)
+    }
+
+    @Test
+    fun addFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        `when`(appExecutors.diskIO()).thenReturn(testExecutor.diskIO())
+        doNothing().`when`(local).insertFavorites(movieDetailTest)
+        repository.addFavorites(movieDetailTest)
+        verify(local, times(1)).insertFavorites(movieDetailTest)
+    }
+
+    @Test
+    fun removeFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        `when`(appExecutors.diskIO()).thenReturn(testExecutor.diskIO())
+        doNothing().`when`(local).deleteFavorites(movieDetailTest)
+        repository.removeFavorites(movieDetailTest)
+        verify(local, times(1)).deleteFavorites(movieDetailTest)
     }
 
     @Test
