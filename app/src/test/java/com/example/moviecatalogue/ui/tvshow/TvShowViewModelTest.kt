@@ -3,7 +3,7 @@ package com.example.moviecatalogue.ui.tvshow
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.moviecatalogue.data.source.Repository
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.utils.DataDummy
 import junit.framework.TestCase.assertNotNull
 import kotlinx.coroutines.Dispatchers
@@ -37,7 +37,7 @@ class TvShowViewModelTest {
     private lateinit var repository: Repository
 
     @Mock
-    private lateinit var observer: Observer<List<TvShowEntity>>
+    private lateinit var observer: Observer<List<MovieEntity>>
 
     @Before
     fun setUp() {

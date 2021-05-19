@@ -8,7 +8,10 @@ import com.example.moviecatalogue.data.source.remote.response.DetailMovieRespons
 import com.example.moviecatalogue.di.Injection
 import com.example.moviecatalogue.ui.detail.DetailViewModel
 import com.example.moviecatalogue.ui.movie.MovieViewModel
+import com.example.moviecatalogue.ui.movie_favorites.MovieFavoritesViewModel
+import com.example.moviecatalogue.ui.tvshow.TvShowFragment
 import com.example.moviecatalogue.ui.tvshow.TvShowViewModel
+import com.example.moviecatalogue.ui.tvshow_favorites.TvShowFavoritesViewModel
 
 class ViewModelFactory private constructor(private val mRepository: Repository) :
     ViewModelProvider.NewInstanceFactory() {
@@ -19,7 +22,7 @@ class ViewModelFactory private constructor(private val mRepository: Repository) 
 
             fun getInstance(context: Context): ViewModelFactory =
                 instance ?: synchronized(this) {
-                    instance?: ViewModelFactory(Injection.provideRepository(context)).apply { instance = this }
+                    instance?: ViewModelFactory(Injection.provideRepository(context))
                 }
         }
 
@@ -34,6 +37,12 @@ class ViewModelFactory private constructor(private val mRepository: Repository) 
             }
             modelClass.isAssignableFrom(DetailViewModel::class.java) -> {
                 DetailViewModel(mRepository) as T
+            }
+            modelClass.isAssignableFrom(MovieFavoritesViewModel::class.java) -> {
+                MovieFavoritesViewModel(mRepository) as T
+            }
+            modelClass.isAssignableFrom(TvShowFavoritesViewModel::class.java) -> {
+                TvShowFavoritesViewModel(mRepository) as T
             }
             else ->throw Throwable("Unknown ViewModel class: " + modelClass.name)
         }

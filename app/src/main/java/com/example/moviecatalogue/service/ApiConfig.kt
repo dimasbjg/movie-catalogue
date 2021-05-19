@@ -11,10 +11,7 @@ class ApiConfig {
         @Volatile
         private var retrofit: Retrofit? = null
         fun getInstance(): Retrofit {
-            val loggingInterceptor =
-                HttpLoggingInterceptor().setLevel(HttpLoggingInterceptor.Level.BODY)
             val client = OkHttpClient.Builder()
-                .addInterceptor(loggingInterceptor)
                 .build()
             return retrofit ?: synchronized(this) {
                 retrofit ?: Retrofit.Builder()

@@ -1,11 +1,15 @@
 package com.example.moviecatalogue.data.source
 
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
+import androidx.lifecycle.MutableLiveData
+import androidx.paging.DataSource
+import com.example.moviecatalogue.data.source.local.LocalDataSource
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.data.source.remote.RemoteDataSource
-import com.example.moviecatalogue.utils.DataDummy
-import com.nhaarman.mockitokotlin2.doAnswer
-import com.nhaarman.mockitokotlin2.eq
-import com.nhaarman.mockitokotlin2.verify
+import com.example.moviecatalogue.db.MovieDao
+import com.example.moviecatalogue.utils.*
+import com.nhaarman.mockitokotlin2.*
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
@@ -13,7 +17,10 @@ import org.junit.Rule
 import org.junit.Test
 import org.mockito.Mockito.`when`
 import org.mockito.Mockito.mock
+import java.util.concurrent.Executors
 
+@Suppress("UNCHECKED_CAST")
+@ExperimentalCoroutinesApi
 class RepositoryTest {
 
     @get:Rule
@@ -25,12 +32,15 @@ class RepositoryTest {
     private val tvShowId = 71906
 
     private val remote = mock(RemoteDataSource::class.java)
-    private val repository = FakeRepository(remote)
+    private val local = mock(LocalDataSource::class.java)
+    private val appExecutors = mock(AppExecutors::class.java)
+    private val repository = FakeRepository(remote, local, appExecutors)
 
     private val movieResponse = DataDummy.getDummyMovieResponse()
-    val movie = DataDummy.getDummyDetailMovieResponse()
+    private val movie = DataDummy.getDummyDetailMovieResponse()
     private val tvShowResponse = DataDummy.getDummyTvShowResponse()
-    val tvShow = DataDummy.getDummyDetailTvShowResponse()
+    private val tvShow = DataDummy.getDummyDetailTvShowResponse()
+    private val testExecutor = AppExecutors(TestExecutor(),TestExecutor(),TestExecutor())
 
     @Test
     fun getListMovie() = runBlocking {
@@ -78,5 +88,57 @@ class RepositoryTest {
         assertEquals(tvShow.voteAverage, tvShowDetailTest.rating)
         assertEquals(tvShow.posterPath, tvShowDetailTest.imgPoster)
         assertEquals(tvShow.status, tvShowDetailTest.status)
+    }
+
+    @Test
+    fun getMoviesFavorites() {
+        val dataSourceFactory =
+            mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
+        `when`(local.getMoviesFavorites()).thenReturn(dataSourceFactory)
+        repository.getMoviesFavorites()
+
+        val moviesFavorite = PagedDataTest.mockPagedList(DataDummy.getDummyListMovie())
+        verify(local).getMoviesFavorites()
+        assertNotNull(moviesFavorite)
+    }
+
+    @Test
+    fun getTvShowFavorites() {
+        val dataSourceFactory =
+            mock(DataSource.Factory::class.java) as DataSource.Factory<Int, MovieEntity>
+        `when`(local.getTvShowFavorites()).thenReturn(dataSourceFactory)
+        repository.getTvShowFavorites()
+
+        val moviesFavorite = PagedDataTest.mockPagedList(DataDummy.getDummyListTvShow())
+        verify(local).getTvShowFavorites()
+        assertNotNull(moviesFavorite)
+    }
+
+    @Test
+    fun addFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        `when`(appExecutors.diskIO()).thenReturn(testExecutor.diskIO())
+        doNothing().`when`(local).insertFavorites(movieDetailTest)
+        repository.addFavorites(movieDetailTest)
+        verify(local, times(1)).insertFavorites(movieDetailTest)
+    }
+
+    @Test
+    fun removeFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        `when`(appExecutors.diskIO()).thenReturn(testExecutor.diskIO())
+        doNothing().`when`(local).deleteFavorites(movieDetailTest)
+        repository.removeFavorites(movieDetailTest)
+        verify(local, times(1)).deleteFavorites(movieDetailTest)
+    }
+
+    @Test
+    fun checkFavorites() {
+        val isFavorite = MutableLiveData<Boolean>()
+        isFavorite.value = false
+        `when`(local.checkFavorites(movieId)).thenReturn(isFavorite)
+        val result = LiveDataTestUnit.getValue(repository.checkFavorites(movieId))
+        verify(local).checkFavorites(movieId)
+        assertEquals(false, result)
     }
 }

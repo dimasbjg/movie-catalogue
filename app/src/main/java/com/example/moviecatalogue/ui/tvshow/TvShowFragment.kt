@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -35,13 +36,32 @@ class TvShowFragment : Fragment() {
         fragmentTvShowBinding.rvTvShow.layoutManager = GridLayoutManager(requireActivity(), 2)
         fragmentTvShowBinding.rvTvShow.adapter = tvShowAdapter
 
-        fragmentTvShowBinding.btSearch.setOnClickListener {
-            val search = fragmentTvShowBinding.search.text.toString()
-            if (search.isEmpty()) return@setOnClickListener
-            isLoading = true
-            showLoading(isLoading)
-            viewModel.setTvShow(search)
+
+        fragmentTvShowBinding.search.setOnClickListener {
+            fragmentTvShowBinding.search.isIconified = false
         }
+
+        fragmentTvShowBinding.search.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query.isNullOrBlank()) return false
+                isLoading = true
+                showLoading(isLoading)
+                viewModel.setTvShow(query)
+                tvShowAdapter.notifyDataSetChanged()
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query.isNullOrBlank()) return false
+                isLoading = true
+                showLoading(isLoading)
+                viewModel.setTvShow(query)
+                tvShowAdapter.notifyDataSetChanged()
+                return false
+            }
+
+        })
 
         viewModel.listTvShow.observe(this, { items ->
             tvShowAdapter.setTvShow(items)

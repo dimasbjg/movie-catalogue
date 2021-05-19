@@ -5,7 +5,7 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.databinding.ItemLayoutBinding
 import com.example.moviecatalogue.ui.detail.DetailActivity
 import com.example.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_DETAIL
@@ -13,9 +13,9 @@ import com.example.moviecatalogue.ui.detail.DetailActivity.Companion.EXTRA_FROM
 
 class TvShowAdapter : RecyclerView.Adapter<TvShowAdapter.MyViewHolder>() {
 
-    private var listTvShow = ArrayList<TvShowEntity>()
+    private var listTvShow = ArrayList<MovieEntity>()
 
-    fun setTvShow(tvShow: List<TvShowEntity>?) {
+    fun setTvShow(tvShow: List<MovieEntity>?) {
         if (tvShow == null) return
         this.listTvShow.clear()
         this.listTvShow.addAll(tvShow)
@@ -23,7 +23,7 @@ class TvShowAdapter : RecyclerView.Adapter<TvShowAdapter.MyViewHolder>() {
 
     class MyViewHolder(private val binding: ItemLayoutBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        fun bind(tvShow: TvShowEntity) {
+        fun bind(tvShow: MovieEntity) {
             with(binding) {
                 itemTitle.text = tvShow.title
                 Glide.with(itemView.context)

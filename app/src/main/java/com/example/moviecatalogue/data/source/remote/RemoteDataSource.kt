@@ -1,8 +1,7 @@
 package com.example.moviecatalogue.data.source.remote
 
 import com.example.moviecatalogue.BuildConfig
-import com.example.moviecatalogue.data.source.local.MovieEntity
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.data.source.remote.response.*
 import com.example.moviecatalogue.service.ApiServiceInterface
 import com.example.moviecatalogue.utils.EspressoIdlingResource
@@ -48,22 +47,6 @@ class RemoteDataSource private constructor(private val apiServiceInterface: ApiS
         val result = apiServiceInterface.getTvShowDetail(id, apiKey)
         EspressoIdlingResource.decrement()
         return result
-    }
-
-    interface MovieListCallback {
-        fun onMovieListLoaded(movies: List<MovieItems>?)
-    }
-
-    interface MovieDetailCallback {
-        fun onMovieDetailLoaded(movieDetail: MovieEntity?)
-    }
-
-    interface TvShowListCallback {
-        fun onTvShowListLoaded(tvShows: List<MovieItems>?)
-    }
-
-    interface TvShowDetailCallback {
-        fun onTvShowDetailLoaded(tvShowDetail: TvShowEntity?)
     }
 
 }

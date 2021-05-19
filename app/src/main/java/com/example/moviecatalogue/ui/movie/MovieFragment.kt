@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.GridLayoutManager
@@ -27,7 +28,6 @@ class MovieFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-
         adapter = MovieAdapter()
         adapter.notifyDataSetChanged()
 
@@ -41,14 +41,30 @@ class MovieFragment : Fragment() {
             factory
         )[MovieViewModel::class.java]
 
-        fragmentMovieBinding.btSearch.setOnClickListener {
-            val search = fragmentMovieBinding.search.text.toString()
-            if (search.isEmpty()) return@setOnClickListener
-            isLoading = true
-            showLoading(isLoading)
-            viewModel.setMovie(search)
-            adapter.notifyDataSetChanged()
+        fragmentMovieBinding.search.setOnClickListener {
+            fragmentMovieBinding.search.isIconified = false
         }
+
+        fragmentMovieBinding.search.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                if (query.isNullOrBlank() || query.length < 5) return false
+                isLoading = true
+                showLoading(isLoading)
+                viewModel.setMovie(query)
+                adapter.notifyDataSetChanged()
+                return false
+            }
+
+            override fun onQueryTextChange(query: String?): Boolean {
+                if (query.isNullOrBlank()) return false
+                isLoading = true
+                showLoading(isLoading)
+                viewModel.setMovie(query)
+                adapter.notifyDataSetChanged()
+                return false
+            }
+
+        })
 
         viewModel.listMovie.observe(this, { listMovie ->
             adapter.setMovie(listMovie)

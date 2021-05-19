@@ -1,7 +1,6 @@
 package com.example.moviecatalogue.utils
 
-import com.example.moviecatalogue.data.source.local.MovieEntity
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.data.source.remote.response.*
 
 object DataDummy {
@@ -33,10 +32,10 @@ object DataDummy {
         return result
     }
 
-    fun getDummyListTvShow(): List<TvShowEntity> {
-        val result = ArrayList<TvShowEntity>()
+    fun getDummyListTvShow(): List<MovieEntity> {
+        val result = ArrayList<MovieEntity>()
         result.add(
-            TvShowEntity(
+            MovieEntity(
                 title = "Animal Fight Night",
                 description = "Featuring battles between some of the biggest and baddest fighters of the animal kingdom and some of the most surprising, revealing the extraordinary motivations and strategies that fuel each incredible brawl.",
                 imgPoster = "/82BySkOlP2jNsswNr7lwHCwWi7F.jpg",

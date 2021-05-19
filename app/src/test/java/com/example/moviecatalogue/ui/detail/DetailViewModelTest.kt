@@ -3,8 +3,7 @@ package com.example.moviecatalogue.ui.detail
 import androidx.arch.core.executor.testing.InstantTaskExecutorRule
 import androidx.lifecycle.Observer
 import com.example.moviecatalogue.data.source.Repository
-import com.example.moviecatalogue.data.source.local.MovieEntity
-import com.example.moviecatalogue.data.source.local.TvShowEntity
+import com.example.moviecatalogue.data.source.local.entity.MovieEntity
 import com.example.moviecatalogue.utils.DataDummy
 import com.nhaarman.mockitokotlin2.verify
 import kotlinx.coroutines.Dispatchers
@@ -39,7 +38,7 @@ class DetailViewModelTest {
     private lateinit var observerMovie: Observer<MovieEntity>
 
     @Mock
-    private lateinit var observerTvShow: Observer<TvShowEntity>
+    private lateinit var observerTvShow: Observer<MovieEntity>
 
     @Mock
     private lateinit var repository: Repository
@@ -71,16 +70,30 @@ class DetailViewModelTest {
     fun getTvShowDetail() = runBlocking {
         `when`(repository.getTvShowDetail(71906)).thenReturn(dataTvShow)
         viewModel.setTvShowDetail(dataTvShow.id)
-        val tvShowEntity = viewModel.tvShow
-        assertNotNull(tvShowEntity)
-        assertEquals(dataTvShow.title, tvShowEntity.value?.title)
-        assertEquals(dataTvShow.imgPoster, tvShowEntity.value?.imgPoster)
-        assertEquals(dataTvShow.releaseDate, tvShowEntity.value?.releaseDate)
-        assertEquals(dataTvShow.rating, tvShowEntity.value?.rating)
-        assertEquals(dataTvShow.description, tvShowEntity.value?.description)
-        assertEquals(dataTvShow.status, tvShowEntity.value?.status)
+        val MovieEntity = viewModel.tvShow
+        assertNotNull(MovieEntity)
+        assertEquals(dataTvShow.title, MovieEntity.value?.title)
+        assertEquals(dataTvShow.imgPoster, MovieEntity.value?.imgPoster)
+        assertEquals(dataTvShow.releaseDate, MovieEntity.value?.releaseDate)
+        assertEquals(dataTvShow.rating, MovieEntity.value?.rating)
+        assertEquals(dataTvShow.description, MovieEntity.value?.description)
+        assertEquals(dataTvShow.status, MovieEntity.value?.status)
 
         viewModel.tvShow.observeForever(observerTvShow)
         verify(observerTvShow).onChanged(dataTvShow)
+    }
+
+    @Test
+    fun addFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        viewModel.insertFavorites(movieDetailTest)
+        verify(repository).addFavorites(movieDetailTest)
+    }
+
+    @Test
+    fun removeFavorites() = runBlocking {
+        val movieDetailTest = DataDummy.getDummyListMovie()[0]
+        viewModel.deleteFavorites(movieDetailTest)
+        verify(repository).removeFavorites(movieDetailTest)
     }
 }
